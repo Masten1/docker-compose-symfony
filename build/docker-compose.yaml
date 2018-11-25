@@ -1,0 +1,61 @@
+version: '3'
+
+networks:
+  services-docker-symfony:
+    driver: bridge
+
+services:
+  service-docker-symfony-app:
+    container_name: service-docker-symfony-app
+    networks:
+      - services-docker-symfony
+    volumes:
+      - ../app:/var/www/docker-symfony
+    build: ./nginx
+    ports:
+      - "81:81"
+    env_file:
+      - ./nginx/configs/env-variables.env
+    command: [nginx-debug, '-g', 'daemon off;']
+    working_dir: /var/www/docker-symfony
+    depends_on:
+      - service-docker-symfony-mysql
+      - service-docker-symfony-php
+    links:
+      - service-docker-symfony-mysql
+
+  service-docker-symfony-php:
+    build: ./php
+    container_name: service-docker-symfony-php
+    networks:
+      - services-docker-symfony
+    env_file:
+      - ./php/configs/env-variables.env
+    volumes:
+      - ../app:/var/www/docker-symfony
+    working_dir: /var/www/docker-symfony
+
+  service-docker-symfony-mysql:
+    container_name: service-docker-symfony-mysql
+    build: ./mysql
+    ports:
+      - "5432:5432"
+    networks:
+      - services-docker-symfony
+    volumes:
+      - ./mysql/db-data:/var/lib/mysql
+    env_file:
+      - ./mysql/configs/env-variables.env
+
+  service-docker-symfony-phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: service-docker-symfony-phpmyadmin
+    networks:
+      - services-docker-symfony
+    environment:
+     - PMA_ARBITRARY=1
+    restart: always
+    ports:
+     - 8081:81
+    volumes:
+     - /sessions
