@@ -2,6 +2,9 @@
 
 namespace App\Controller;
 
+use App\Patterns\Composite\Archer;
+use App\Patterns\Composite\Army;
+use App\Patterns\Composite\LaserCannonUnit;
 use App\Patterns\Singleton\Singleton;
 use App\Patterns\Strategy\FixedCostStrategy;
 use App\Patterns\Strategy\Lecture;
@@ -74,6 +77,40 @@ class WelcomeController extends AbstractController
         $sing2 = Singleton::getInstance();
         dump($sing2);
         dump($sing2->getProperty("name"));
+
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+        ]);
+    }
+
+    /**
+     * @Route("/composite", name="composite")
+     */
+    public function composite()
+    {
+        $main_army = new Army();
+
+        $main_army->addUnit(new Archer());
+        $main_army->addUnit(new LaserCannonUnit());
+
+        dump($main_army->bombardStrength());
+
+        $sub_army = new Army();
+        $sub_army->addUnit(new Archer());
+        $sub_army->addUnit(new Archer());
+        $sub_army->addUnit(new Archer());
+        $sub_army->addUnit(new LaserCannonUnit());
+
+        dump($sub_army->bombardStrength());
+
+        $main_army->addUnit($sub_army);
+
+        dump($main_army->bombardStrength());
+
+        $archer = new Archer();
+        $archer->addUnit($main_army);
+
+        dump($archer);
 
         return $this->json([
             'message' => 'Welcome to your new controller!',
