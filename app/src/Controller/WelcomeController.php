@@ -5,6 +5,9 @@ namespace App\Controller;
 use App\Patterns\Composite\Archer;
 use App\Patterns\Composite\Army;
 use App\Patterns\Composite\LaserCannonUnit;
+use App\Patterns\Decorator\DiamondDecorator;
+use App\Patterns\Decorator\Plains;
+use App\Patterns\Decorator\PollutionDecorator;
 use App\Patterns\Singleton\Singleton;
 use App\Patterns\Strategy\FixedCostStrategy;
 use App\Patterns\Strategy\Lecture;
@@ -107,10 +110,24 @@ class WelcomeController extends AbstractController
 
         dump($main_army->bombardStrength());
 
-        $archer = new Archer();
-        $archer->addUnit($main_army);
+        return $this->json([
+            'message' => 'Welcome to your new controller!',
+        ]);
+    }
 
-        dump($archer);
+    /**
+     * @Route("decorator", name="decorator")
+     */
+    public function decorator()
+    {
+        $tile = new Plains();
+        dump($tile->getWealthFactor());
+
+        $tile = new DiamondDecorator(new Plains());
+        dump($tile->getWealthFactor());
+
+        $tile = new PollutionDecorator(new DiamondDecorator(new Plains()));
+        dump($tile->getWealthFactor());
 
         return $this->json([
             'message' => 'Welcome to your new controller!',

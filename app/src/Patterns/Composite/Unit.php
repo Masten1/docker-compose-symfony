@@ -11,14 +11,9 @@ namespace App\Patterns\Composite;
 
 abstract class Unit
 {
-    function addUnit(Unit $unit)
+    public function getComposite()
     {
-        throw new UnitException(get_class($this) . " is leaves");
-    }
-
-    function removeUnit(Unit $unit)
-    {
-        throw new UnitException(get_class($this) . " is leaves");
+        return null;
     }
 
     abstract function bombardStrength();
